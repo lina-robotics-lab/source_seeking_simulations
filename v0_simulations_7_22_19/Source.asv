@@ -1,0 +1,13 @@
+classdef Source
+   properties
+       State
+   end
+   methods
+       % methods: return reward from source to a point, true distance from
+       % source to agent?
+       function obj = Source(x,)
+          if 
+       end
+       
+   end
+end
