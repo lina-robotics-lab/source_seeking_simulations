@@ -25,10 +25,12 @@ classdef RobotAgent < handle
             curState = obj.states(end, 1:2);
             curReward = obj.states(end, 3);
             
+            % constants relating to history
             beta = 1;
             gamma = 2;
             
             dir = [0, 0];
+            % Fix runtime at a certain point
             max = size(obj.states(1:(end-1)), 1);
             if(max > 100)
                 max = 100;
