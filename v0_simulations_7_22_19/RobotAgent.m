@@ -10,18 +10,18 @@ classdef RobotAgent < handle
             temp = [obj.states; state];
             obj.states = temp;
         end
-%         function r = addReward(obj, reward)
-%             temp = [obj.states; reward];
-%             obj.rewards = temp;            
-%         end
-        function r = returnState(obj)   % return latest state
-            r = obj.states(end, :);
+        function r = returnPos(obj)   % return latest position
+            r = obj.states(end, 1:2);
         end
-%         function r = returnReward(obj)
-%             r = obj.states(end, :);
-%         end
+        function r = returnStates(obj, num)
+            max = size(obj.states(1:end, 1), 1);
+            if(max > num)
+                max = num;
+            end
+            r = obj.states(end-max+1:end, :);
+        end
         
-        function r = descDirection(obj) % use multi-point gradient algorithm 
+        function r = descDirection(obj, list) % use multi-point gradient algorithm 
             curState = obj.states(end, 1:2);
             curReward = obj.states(end, 3);
             
@@ -31,17 +31,18 @@ classdef RobotAgent < handle
             
             dir = [0, 0];
             % Fix runtime at a certain point
-            max = size(obj.states(1:(end-1)), 1);
-            if(max > 100)
-                max = 100;
-            end
-            for n = max
-                checkState = obj.states(end-n, 1:2);
-                checkReward = obj.states(end-n, 3);
-%                 if(checkState == curState)
-%                     continue;
-%                 end
+%             max = size(obj.states(1:(end-1)), 1);
+%             if(max > 100)
+%                 max = 100;
+%             end
+            for n = 1:size(list, 1)
+                checkState = list(n, 1:2);
+                checkReward = list(n, 3);
+
                 dif = checkState - curState;
+                if dif == 0
+                    continue
+                end
                 temp = (beta/norm(dif)^gamma)*(log(checkReward) - log(curReward)).*(dif/norm(dif));
                 
                 dir = dir + temp;
