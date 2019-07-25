@@ -8,23 +8,29 @@ end
 
 
 % Initialize source
-source1 = Source(1, 1, 1);
+source1 = Source(0, 0, 1);
 % disp(source1.State);
 
 % Initialize robot, start point, then test several points
 robot1 = RobotAgent;
-pos = [4,5];
+pos = [5,5];
 reward = source1.Reward(pos);
 robot1.addState([pos, reward]);
 
 robot2 = RobotAgent;
-pos = [-4,5];
+pos = [5,5];
 reward = source1.Reward(pos);
 robot2.addState([pos, reward]);
 
+robot3 = RobotAgent;
+pos = [5,5];
+reward = source1.Reward(pos);
+robot3.addState([pos, reward]);
+
 % Test between 1 and multiple robot cases
-robotList = [robot1];
+% robotList = [robot1];
 % robotList = [robot1, robot2];
+robotList = [robot1, robot2, robot3];
 
 % Establish initial test points
 count = 0;
@@ -42,7 +48,7 @@ end
 
 % Loop until robot gets close enough source
 exit = false;
-var = 0.1;    % variance in step direction
+var = 0.5;    % variance in step direction
 target = 0.3;
 while(~exit && count < 1000)
     stateList = [];
@@ -54,7 +60,8 @@ while(~exit && count < 1000)
     
     % For all robots find direction and move
     for j = 1:size(robotList, 2)
-        dir = robotList(j).descDirection(stateList) + var*randn(1,2);   % Find descent direction, vary it
+        dir = robotList(j).descDirection(stateList) + var*randn(1,2);
+%         dir = robotList(j).descDirection(robotList(j).returnStates(10)) + var*randn(1,2); % Find descent direction, vary it
         dir = 0.1 * dir/norm(dir);
         pos = robotList(j).returnPos() + dir;
         reward = source1.Reward(pos);

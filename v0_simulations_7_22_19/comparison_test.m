@@ -4,5 +4,7 @@ for i = 1:trials
     temp = single_source_v0(false);
     storeCounts(i) = temp;
 end
-
-disp(sum(storeCounts)/trials)
+figure
+histogram(storeCounts);
+disp(mean(storeCounts));
+disp(std(storeCounts));
