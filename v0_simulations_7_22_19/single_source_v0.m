@@ -18,12 +18,12 @@ reward = source1.Reward(pos);
 robot1.addState([pos, reward]);
 
 robot2 = RobotAgent;
-pos = [5,5];
+pos = [5,5.1];
 reward = source1.Reward(pos);
 robot2.addState([pos, reward]);
 
 robot3 = RobotAgent;
-pos = [5,5];
+pos = [5.1,5];
 reward = source1.Reward(pos);
 robot3.addState([pos, reward]);
 
@@ -34,21 +34,21 @@ robotList = [robot1, robot2, robot3];
 
 % Establish initial test points
 count = 0;
-for i = 1:4
-    for j = 1:size(robotList, 2)
-        dir = [randn(), randn()];
-        dir = 0.1 * dir/norm(dir);  % velocity/step size of 0.1
-
-        pos = robotList(j).returnPos() + dir;
-        reward = source1.Reward(pos);       % move to position and check reward
-        robotList(j).addState([pos, reward]);
-%         count = count + 1;
-    end
-end
+% for i = 1:4
+%     for j = 1:size(robotList, 2)
+%         dir = [randn(), randn()];
+%         dir = 0.1 * dir/norm(dir);  % velocity/step size of 0.1
+% 
+%         pos = robotList(j).returnPos() + dir;
+%         reward = source1.Reward(pos);       % move to position and check reward
+%         robotList(j).addState([pos, reward]);
+% %         count = count + 1;
+%     end
+% end
 
 % Loop until robot gets close enough source
 exit = false;
-var = 0.5;    % variance in step direction
+var = 0.1;    % variance in step direction
 target = 0.3;
 while(~exit && count < 1000)
     stateList = [];

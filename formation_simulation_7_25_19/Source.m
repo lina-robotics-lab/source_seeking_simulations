@@ -9,9 +9,10 @@ classdef Source
           obj.state = [x, y, max];
        end
        function r = Reward(obj, pos)    % return reward from a certain position - 1/r^2
-           var = 0.00;
-           temp = (pos - obj.state(1:end-1)).^2;
-           r = obj.state(end)/sum(temp) + var*randn();
+           var = 0.001;
+           temp = sum(pos - obj.state(1:end-1));
+           r = -obj.state(end)*4/((1+exp(0.5*temp))*(1+exp(-0.5*temp))) + var*randn();
+%            r = -obj.state(end)/sum(temp) + var*randn();
        end
        function r = returnPos(obj)
           r = obj.state(1:2);
