@@ -36,7 +36,7 @@ robotList = [robot1, robot2, robot3];
 count = 0;
 % for i = 1:4
 %     for j = 1:size(robotList, 2)
-%         dir = [randn(), randn()];
+%         dir = [rand(), rand()];
 %         dir = 0.1 * dir/norm(dir);  % velocity/step size of 0.1
 % 
 %         pos = robotList(j).returnPos() + dir;
@@ -52,15 +52,17 @@ var = 0.1;    % variance in step direction
 target = 0.3;
 while(~exit && count < 1000)
     stateList = [];
+    curPosList = [];
     
     % Get all state information from all robots
     for j = 1:size(robotList, 2)
         stateList = cat(1, stateList, robotList(j).returnStates(10));
+        curPosList = cat(1, curPosList, robotList(j).returnPos());
     end
     
     % For all robots find direction and move
     for j = 1:size(robotList, 2)
-        dir = robotList(j).descDirection(stateList) + var*randn(1,2);
+        dir = robotList(j).descDirection(stateList, curPosList) + var*randn(1,2);
 %         dir = robotList(j).descDirection(robotList(j).returnStates(10)) + var*randn(1,2); % Find descent direction, vary it
         dir = 0.1 * dir/norm(dir);
         pos = robotList(j).returnPos() + dir;
