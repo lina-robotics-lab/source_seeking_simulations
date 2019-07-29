@@ -62,7 +62,7 @@ while(~exit && count < 1000)
     
     % For all robots find direction and move
     for j = 1:size(robotList, 2)
-        dir = robotList(j).descDirection(stateList, curPosList) + var*randn(1,2);
+        dir = robotList(j).descDirection(stateList, []) + var*randn(1,2);
 %         dir = robotList(j).descDirection(robotList(j).returnStates(10)) + var*randn(1,2); % Find descent direction, vary it
         dir = 0.1 * dir/norm(dir);
         pos = robotList(j).returnPos() + dir;

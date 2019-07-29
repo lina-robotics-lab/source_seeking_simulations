@@ -27,7 +27,7 @@ classdef RobotAgent < handle
             
             % constants relating to history
             beta = 1;   % beta is uesless, not needed
-            gamma = 2;
+            gamma = 10;
             
             dir = [0, 0];
             for n = 1:size(list, 1)     % Iterate through all states given which is limited
@@ -38,7 +38,8 @@ classdef RobotAgent < handle
                 if dif == 0
                     continue
                 end
-                temp = (beta/norm(dif)^gamma)*((checkReward) - (curReward)).*(dif/norm(dif)); % note log dif in reward
+%                 temp = (beta/norm(dif)^gamma)*((checkReward) - (curReward)).*(dif/norm(dif)); 
+                temp = (beta/exp(gamma*norm(dif)))*((checkReward) - (curReward)).*(dif/norm(dif)); 
                 
                 dir = dir + temp;
             end
@@ -53,7 +54,7 @@ classdef RobotAgent < handle
                     continue
                 end
                 
-                temp = 0.0000001* ((0.5/norm(dif))^12 - 2*(0.5/norm(dif))^6).*(dif/norm(dif));
+                temp = -0.0* ((0.5/norm(dif))^12 - 2*(0.5/norm(dif))^6).*(dif/norm(dif));
                 dir = dir + temp;
             end
             r = dir/norm(dir);  % normalize direction vector
