@@ -21,12 +21,12 @@ classdef RobotAgent < handle
             r = obj.states(end-max+1:end, :);
         end
         
-        function r = descDirection(obj, list) % use multi-point gradient algorithm 
+        function r = descDirection(obj, list, curpos) % use multi-point gradient algorithm 
             curState = obj.states(end, 1:2);
             curReward = obj.states(end, 3);
             
             % constants relating to history
-            beta = 1;
+            beta = 1;   % beta is uesless, not needed
             gamma = 2;
             
             dir = [0, 0];
@@ -40,6 +40,20 @@ classdef RobotAgent < handle
                 end
                 temp = (beta/norm(dif)^gamma)*((checkReward) - (curReward)).*(dif/norm(dif)); % note log dif in reward
                 
+                dir = dir + temp;
+            end
+            
+            alpha = 0.3;
+            delta = 0.4;
+            for n = 1:size(curpos, 1)
+                checkState = curpos(n, 1:2);
+
+                dif = checkState - curState;    % check if they're from the same position, discard b/ divide by 0
+                if dif == 0
+                    continue
+                end
+                
+                temp = 0.0000001* ((0.5/norm(dif))^12 - 2*(0.5/norm(dif))^6).*(dif/norm(dif));
                 dir = dir + temp;
             end
             r = dir/norm(dir);  % normalize direction vector
