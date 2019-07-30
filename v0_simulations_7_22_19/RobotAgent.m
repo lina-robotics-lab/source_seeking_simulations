@@ -26,8 +26,8 @@ classdef RobotAgent < handle
             curReward = obj.states(end, 3);
             
             % constants relating to history
-            beta = 1;   % beta is uesless, not needed
-            gamma = 10;
+            beta = 1/(2*pi);   % beta is uesless, not needed in the basic formulation
+            gamma = 3;
             
             dir = [0, 0];
             for n = 1:size(list, 1)     % Iterate through all states given which is limited
@@ -39,7 +39,8 @@ classdef RobotAgent < handle
                     continue
                 end
 %                 temp = (beta/norm(dif)^gamma)*((checkReward) - (curReward)).*(dif/norm(dif)); 
-                temp = (beta/exp(gamma*norm(dif)))*((checkReward) - (curReward)).*(dif/norm(dif)); 
+%                 temp = (beta/(gamma^norm(dif)))*((checkReward) - (curReward)).*(dif/norm(dif)); 
+                temp = (exp(-0.5*norm(dif)^2))*((checkReward) - (curReward)).*(dif/norm(dif));   %Nesterov and Spoikony
                 
                 dir = dir + temp;
             end
@@ -54,7 +55,8 @@ classdef RobotAgent < handle
                     continue
                 end
                 
-                temp = -0.0* ((0.5/norm(dif))^12 - 2*(0.5/norm(dif))^6).*(dif/norm(dif));
+%                 temp = -curReward* ((0.5/norm(dif))^6 - 2*(0.5/norm(dif))^4).*(dif/norm(dif));
+                temp = -0.01*curReward/(norm(dif)^gamma).*(dif/norm(dif));
                 dir = dir + temp;
             end
             r = dir/norm(dir);  % normalize direction vector
