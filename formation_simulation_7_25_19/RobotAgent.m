@@ -2,6 +2,8 @@
 classdef RobotAgent < handle
     properties
         states = [];
+        vel = [0, 0];
+        acc = [0, 0];
     end
     methods
         %Methods needed: calculate the direction of descent, move to the
