@@ -38,9 +38,9 @@ classdef RobotAgent < handle
                 if dif == 0
                     continue
                 end
-%                 temp = (beta/norm(dif)^gamma)*((checkReward) - (curReward)).*(dif/norm(dif)); 
+                temp = (beta/norm(dif)^gamma)*((checkReward) - (curReward)).*(dif/norm(dif)); 
 %                 temp = (beta/(gamma^norm(dif)))*((checkReward) - (curReward)).*(dif/norm(dif)); 
-                temp = (exp(-0.5*norm(dif)^2))*((checkReward) - (curReward)).*(dif/norm(dif));   %Nesterov and Spoikony
+%                 temp = (exp(-0.5*norm(dif)^2))*((checkReward) - (curReward)).*(dif/norm(dif));   %Nesterov and Spoikony
                 
                 dir = dir + temp;
             end
@@ -56,7 +56,7 @@ classdef RobotAgent < handle
                 end
                 
 %                 temp = -curReward* ((0.5/norm(dif))^6 - 2*(0.5/norm(dif))^4).*(dif/norm(dif));
-                temp = -0.01*curReward/(norm(dif)^gamma).*(dif/norm(dif));
+                temp = 0.1/(norm(dif)^gamma*log(curReward)).*(dif/norm(dif));
                 dir = dir + temp;
             end
             r = dir/norm(dir);  % normalize direction vector
