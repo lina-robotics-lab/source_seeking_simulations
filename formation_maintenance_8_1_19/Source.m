@@ -15,7 +15,7 @@ classdef Source
            r = obj.state(end)*8/((1+exp(sharp*temp))*(1+exp(-sharp*temp))) + var*randn();
        end
        function r = returnPos(obj)
-          r = obj.state(1:2);
+          r = double(obj.state(1:2));
        end
        
    end
