@@ -131,18 +131,35 @@ for iter = 1:10000
    
    % Move the virtual body
     for i = 1:size(virtList, 2)
-%         temp = t*grad_est(1:2);
-%         if temp > vel_max*0.1
-%             pos = virtList(i).returnPos() - vel_max*0.1 * grad_est(1:2)/norm(grad_est(1:2));
-%         else
-%             pos = virtList(i).returnPos() - t*grad_est(1:2);
-%         end        
+        temp = t*grad_est(1:2);
+        if temp > vel_max*0.1
+            pos = virtList(i).returnPos() - vel_max*0.1 * grad_est(1:2)/norm(grad_est(1:2));
+        else
+            pos = virtList(i).returnPos() - t*grad_est(1:2);
+        end        
         pos = virtList(i).returnPos() - t*grad_est(1:2);
         reward = source1.Reward(pos);
         virtList(i).addState([pos, reward]);
     end
     
-    % Check for exit
+    %% Potential field adjustment
+    Xf = sym('xf', [1, 6]);
+%     C_theory = [Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1];
+%     K = C_theory*inv(transpose(C_theory)*C_theory)*inv(transpose(C_theory)*C_theory)*transpose(C_theory);
+    opt_pos = @(Xf)trace([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1]*inv(transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*[Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*inv(transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*[Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1]))*0.01^2;
+    x0 = transpose(double([robotList(1).returnPos(), robotList(2).returnPos(), robotList(3).returnPos()]));
+%     options = optimset('PlotFcns',@optimplotfval);
+    options.MaxFunEvals = 400;
+    final = sym(zeros(1, 6));
+    final(1, :) = fminsearch(opt_pos, x0, options);
+    x1 = double(reshape(final, [2, 3]));
+    avg = 0;
+    for i = 1:3
+       avg = avg + norm(x1(:,i));  
+    end
+    avg = avg/3;
+    
+    %% Check for exit
     for j = 1:size(virtList, 2)
         if norm(virtList(j).returnPos() - source1.returnPos()) < target
             exit = true;

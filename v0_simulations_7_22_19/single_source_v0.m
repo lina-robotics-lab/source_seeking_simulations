@@ -109,11 +109,23 @@ y = count/size(robotList, 2);
 % Plot figures
 if show
     figure
-    stateList = [];
+    hold on
+    grid on
+    rotate3d on
     for j = 1:size(robotList, 2)
-        stateList = cat(1, stateList, robotList(j).states);
+        scatter3(robotList(j).states(:, 1), robotList(j).states(:, 2), 1:size(robotList(j).states,1), 10, -robotList(j).states(:, 3));
     end
-    scatter3(stateList(:, 1), stateList(:, 2), 1:size(stateList,1), 10, -stateList(:, 3));
+%     for j = 1:size(virtList, 2)
+%         scatter3(virtList(j).states(:, 1), virtList(j).states(:, 2), 1:size(virtList(j).states,1), 10, virtList(j).states(:, 3), 'd');
+%     end
+    hold off
+    
+%     figure
+%     stateList = [];
+%     for j = 1:size(robotList, 2)
+%         stateList = cat(1, stateList, robotList(j).states);
+%     end
+%     scatter3(stateList(:, 1), stateList(:, 2), 1:size(stateList,1), 10, -stateList(:, 3));
 end
 
 end
