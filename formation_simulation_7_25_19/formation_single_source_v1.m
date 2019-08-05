@@ -3,15 +3,16 @@
 syms f_d(d) f_h(d)
 t = 0.1;    % this is s-dot
 
+h_0 = sqrt(2);
+d_0 = h_0*sqrt(3);
+
 a_d = 0.5;
 d_1 = 4;
-d_0 = sqrt(2)*sqrt(3);
 f_d = @(d)a_d*(1/d - d_0/d^2);
 d_def = feval(f_d, d_1);
 
 a_h = 0.5;
 h_1 = 4;
-h_0 = sqrt(2);
 f_h = @(d)a_h*(1/d - h_0/d^2);
 h_def = feval(f_h, h_1);
 
@@ -48,13 +49,26 @@ virtLead2.addState([pos, reward]);
 
 virtList = [virtLead1];
 
+%% Optimization Setup
+
+Xf = sym('xf', [1, 6]);
+sigma_h = 0;
+sigma_m = 0.01;
+%     C_theory = [Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1];
+%     K = C_theory*inv(transpose(C_theory)*C_theory)*inv(transpose(C_theory)*C_theory)*transpose(C_theory);
+opt_pos = @(Xf)trace([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1]*(sigma_m)^2 + inv(transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*[Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*inv(transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*[Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1]))*(sigma_h)^2;
+
+%     options = optimset('PlotFcns',@optimplotfval);
+options.MaxFunEvals = 400;
+
+
 K_p = 0.1;
 vel_max = 0.1;
 target = 0.1;
 gradients = [];
 exit = false;
 % Iterative steps
-for iter = 1:10000
+for iter = 1:1000
     if exit
        break 
     end
@@ -143,13 +157,7 @@ for iter = 1:10000
     end
     
     %% Potential field adjustment
-    Xf = sym('xf', [1, 6]);
-%     C_theory = [Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1];
-%     K = C_theory*inv(transpose(C_theory)*C_theory)*inv(transpose(C_theory)*C_theory)*transpose(C_theory);
-    opt_pos = @(Xf)trace([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1]*inv(transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*[Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*inv(transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*[Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1])*transpose([Xf(1) Xf(2) 1; Xf(3) Xf(4) 1; Xf(5) Xf(6) 1]))*0.01^2;
-    x0 = transpose(double([robotList(1).returnPos(), robotList(2).returnPos(), robotList(3).returnPos()]));
-%     options = optimset('PlotFcns',@optimplotfval);
-    options.MaxFunEvals = 400;
+    x0 = transpose(double([robotList(1).returnPos() - com, robotList(2).returnPos() - com, robotList(3).returnPos() - com]));
     final = sym(zeros(1, 6));
     final(1, :) = fminsearch(opt_pos, x0, options);
     x1 = double(reshape(final, [2, 3]));
@@ -158,6 +166,10 @@ for iter = 1:10000
        avg = avg + norm(x1(:,i));  
     end
     avg = avg/3;
+    h_0 = avg;
+%     h_0 = sqrt(2);
+    d_0 = h_0*sqrt(3);
+    
     
     %% Check for exit
     for j = 1:size(virtList, 2)
