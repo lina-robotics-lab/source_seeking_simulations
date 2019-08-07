@@ -108,13 +108,18 @@ for iter = 1:1000
        
        % Move the robot
        pos = double(robotList(i).returnPos() + robotList(i).vel*t + 0.5*robotList(i).acc*t^2);
+%         if norm(robotList(i).vel) == vel_max
+%             pos = double(robotList(i).returnPos() + robotList(i).vel*t);
+%         else
+%             pos = double(robotList(i).returnPos() + robotList(i).vel*t + 0.5*robotList(i).acc*t^2);
+%         end
        reward = source1.Reward(pos);
        robotList(i).addState([pos, reward]);
        
        % Change robot's intial velocity for next cycle
        robotList(i).vel = robotList(i).vel + robotList(i).acc*t;
-       if robotList(i).vel > vel_max
-           robotList(i).vel = vel_max;
+       if norm(robotList(i).vel) > vel_max
+           robotList(i).vel = vel_max * robotList(j).vel/norm(robotList(j).vel);
        end
    end
    
