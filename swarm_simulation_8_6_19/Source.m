@@ -11,7 +11,7 @@ classdef Source
        function r = Reward(obj, pos)    % return reward from a certain position - 1/r^2
            var = 0.0;
            temp = norm(pos - obj.state(1:end-1));
-           r = obj.state(end)*4/((1+exp(0.5*temp))*(1+exp(-0.5*temp))) + var*randn();
+           r = obj.state(end)*4*3/((1+exp(0.5*temp))*(1+exp(-0.5*temp))) + var*randn();
 %            r = -obj.state(end)/temp + var*randn();
        end
        function r = returnPos(obj)

@@ -24,8 +24,8 @@ classdef RBF
         end
         
         function r = returnGrad(obj, pos)
-            x = (1/(obj.factor * obj.width^2))*exp(-1*norm(pos - obj.center)^2/(2 * obj.width^2))*(obj.center(1) - pos(1));
-            y = (1/(obj.factor * obj.width^2))*exp(-1*norm(pos - obj.center)^2/(2 * obj.width^2))*(obj.center(2) - pos(2));
+            x = (1/(obj.factor * obj.width^2))*exp(-1*norm(pos - obj.center)^2/(2 * obj.width^2))*(-obj.center(1) + pos(1));
+            y = (1/(obj.factor * obj.width^2))*exp(-1*norm(pos - obj.center)^2/(2 * obj.width^2))*(-obj.center(2) + pos(2));
             r = [x, y];
         end
     end

@@ -68,7 +68,7 @@ target = 0.1;
 gradients = [];
 exit = false;
 % Iterative steps
-for iter = 1:1000
+for iter = 1:1500
     if exit
        break 
     end
@@ -177,8 +177,8 @@ for iter = 1:1000
     
     
     %% Check for exit
-    for j = 1:size(virtList, 2)
-        if norm(virtList(j).returnPos() - source1.returnPos()) < target
+    for j = 1:size(robotList, 2)
+        if norm(robotList(j).returnPos() - source1.returnPos()) < target
             exit = true;
             break
         end
@@ -199,6 +199,36 @@ if show
         scatter3(virtList(j).states(:, 1), virtList(j).states(:, 2), 1:size(virtList(j).states,1), 10, virtList(j).states(:, 3), 'd');
     end
     hold off
+end
+
+gif = false;
+if gif
+    stateList = [];
+    for k = 1:length(virtList(1).states(:, 1))
+       for j = 1:size(virtList, 2)
+           stateList = cat(1, stateList, virtList(j).states(k, :));
+       end
+       for j = 1:size(robotList, 2)
+           stateList = cat(1, stateList, robotList(j).states(k, :));
+       end
+    end
+
+
+    figure
+    axes('position',[0 0 1 1]);
+    plot1 = scatter3(stateList(1, 1),stateList(1, 2),1, 10,stateList(1, 3),'d');
+    view(30, 45);
+    xlim([-1 8]);
+    ylim([-1 8]);
+    zlim([-1, iter*4]);
+    gif('formation_single_source_v3.gif', 'DelayTime',0.0001);
+    for k = 2:length(stateList(:, 1))
+        plot1.XData = stateList(1:k, 1);
+        plot1.YData = stateList(1:k, 2);
+        plot1.ZData = 1:k;
+        plot1.CData = stateList(1:k, 3);
+        gif;
+    end
 end
 
 disp(iter);

@@ -62,7 +62,10 @@ classdef RobotAgent < handle
                 end
                 
 %                 temp = -curReward* ((0.5/norm(dif))^6 - 2*(0.5/norm(dif))^4).*(dif/norm(dif));
-                temp = -0.1/(norm(dif)^gamma).*(dif/norm(dif));
+%                 temp = -0.1/(norm(dif)^gamma).*(dif/norm(dif));
+                a_d = 0.5;
+                d_0 = 0.75;
+                temp = a_d*(1/norm(dif) - d_0/norm(dif)^2).*(dif/norm(dif));
                 dir = dir + temp;
             end
             r = max*dir/norm(dir);  % normalize direction vector
